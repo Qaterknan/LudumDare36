@@ -22,7 +22,7 @@ function EarthGroup(game, textureNames){
 		var y = this.game.input.activePointer.worldY;
 		var point = new Phaser.Point(-x,-y);
 		var clickAngle = this.game.math.radToDeg(point.angle({x : 1, y : 0}));
-		earthGroup.addStructure(clickAngle-earthGroup.earth.angle, "basicPyramid");
+		earthGroup.addStructure(clickAngle-earthGroup.earth.angle, "pyramida");
 	});
 }
 EarthGroup.prototype = Object.create( Phaser.Group.prototype );
