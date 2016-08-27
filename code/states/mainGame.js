@@ -2,25 +2,15 @@ var mainGameState = new Phaser.State();
 
 mainGameState.preload = function (){
 	this.game.load.path = "assets/";
-	this.game.load.image("earth","basicEarth.png");
+	this.game.load.image("basicEarth","basicEarth.png");
+	this.game.load.image("basicPyramid","basicPyramid.png");
 }
 
 mainGameState.create = function (){
 	this.game.world.setBounds(-this.game.width/2,-this.game.height/2,this.game.width,this.game.height);
 	
-	earthGroup = this.game.add.group(this.game.world, "earthGroup");
+	earthGroup = new EarthGroup(this.game, {"earth" : "basicEarth","pyramid" : "basicPyramid"});
 	
-	earth = new Phaser.Sprite(this.game, 0,0,"earth");
-	earth.anchor.x = 0.5;
-	earth.anchor.y = 0.5;
-	
-	earth.height = 200;
-	earth.width = 200;
-	
-	earth.angularSpeed = 1;
-	earth.update = function(){
-		this.angle += this.angularSpeed;
-	}
-	
-	earthGroup.addChild(earth);
+	this.game.world.addChild(earthGroup);
+	earthGroup.addStructure(0, "basicPyramid");
 }

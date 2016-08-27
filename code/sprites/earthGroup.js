@@ -16,15 +16,14 @@ function EarthGroup(game, textureNames){
 	}
 	
 	this.addChild(this.earth);
-	/// Pyramida
-	var pyramid = new Phaser.Sprite(this.game, 0,0,textureNames.pyramid);
-	pyramid.anchor.x = 0.5;
-	pyramid.anchor.y = 1;
-	pyramid.width = pyramid.width/this.earth.scale.x;
-	pyramid.height = pyramid.height/this.earth.scale.y;
-	pyramid.position.y = -this.earth.height/(2*this.earth.scale.y);
-	
-	this.earth.addChild(pyramid);
+	/// Handler pro přidávání struktur
+	this.game.input.onTap.add(function(){
+		var x = this.game.input.activePointer.worldX;
+		var y = this.game.input.activePointer.worldY;
+		var point = new Phaser.Point(-x,-y);
+		var clickAngle = this.game.math.radToDeg(point.angle({x : 1, y : 0}));
+		earthGroup.addStructure(clickAngle-earthGroup.earth.angle, "basicPyramid");
+	});
 }
 EarthGroup.prototype = Object.create( Phaser.Group.prototype );
 
