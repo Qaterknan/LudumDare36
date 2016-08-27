@@ -5,12 +5,37 @@ mainGameState.preload = function (){
 	this.game.load.image("earth","planetEarth.png");
 	this.game.load.image("moon", "moon.png");
 	this.game.load.image("ufo", "ufo.png");
-	this.game.load.image("pyramida", "egypt.png")
+	this.game.load.image("pyramida", "egypt.png");
+	this.game.load.image("background", "bg.png");
 }
 
 mainGameState.create = function (){
-	this.game.world.setBounds(-this.game.width/2,-this.game.height/2,this.game.width,this.game.height);
-	
+	var width = this.game.width;
+	var height = this.game.height;
+	this.game.world.setBounds(-width/2,-height/2,width,height);
+
+	//STAR GROUP
+	var starGroup
+	var background = new Phaser.Sprite(this.game, 0, 0, "background");
+	background.anchor.x = 0.5;
+	background.anchor.y = 0.5;
+
+	background.pivot.x = 0;
+	background.pivot.y = 0;
+
+	var dim = Math.round(
+		Math.sqrt(Math.pow(width,2) + Math.pow(height,2))
+	);
+	background.height = dim;
+	background.width = dim;
+
+	background.z;
+
+	background.angularSpeed = 1/50;
+
+	this.game.world.addChild(background);
+
+	//EARTH GROUP
 	earthGroup = new EarthGroup(this.game, {"earth" : "earth","pyramid" : "pyramida"});
 	
 	this.game.world.addChild(earthGroup);
@@ -40,16 +65,20 @@ mainGameState.create = function (){
 	ufo.width = 64;
 	
 	ufo.angularSpeed = 0.5;
-	
+
+	background.update = function() {
+		this.angle += this.angularSpeed;
+	};
+
 	moon.update = function(){
 		this.angle += this.angularSpeed;
-	}
+	};
 
 	ufo.update = function(){
 		this.angle += this.angularSpeed;
 		this.pivot.y *= 1 - 1/10000
-	}
+	};
 
 	this.game.world.addChild(moon);
 	this.game.world.addChild(ufo);
-}
+};
