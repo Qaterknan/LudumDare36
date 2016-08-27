@@ -14,7 +14,6 @@ mainMenuState.preload = function (){
 }
 
 mainMenuState.create = function (){
-	console.log("Calling create for Main Menu");
 	/// Zrušit value true pokud se nemá spouštět hra rovnou
 	this.game.state.add("game", mainGameState, true);
 }
