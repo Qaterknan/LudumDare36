@@ -71,19 +71,28 @@ mainGameState.create = function (){
 	moon.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
 	moon.body.angularVelocity = 1/14;
 	
+	ufoColGroup = this.game.physics.p2.createCollisionGroup();
+	otherColGroup = this.game.physics.p2.createCollisionGroup();
+	
+	moon.body.setCollisionGroup(otherColGroup);
+	moon.body.collides([ufoColGroup]);
+	
 	//UFO
 	ufo = new Phaser.Sprite(this.game, 0, 0, "ufo");
 	ufo.anchor.x = 0.5;
 	ufo.anchor.y = 0.5;
 	
-	ufo.pivot.x = 0;
-	ufo.pivot.y = 300;
+	ufo.pivot.x = -100;
+	ufo.pivot.y = 200;
 	
 	ufo.height = 64;
 	ufo.width = 64;
 	
-	ufo.angularSpeed = 0.5;
-
+	this.game.physics.p2.enable(ufo, true);
+	ufo.body.collides([otherColGroup]);
+	ufo.body.setRectangle(48,48,100,-200);
+	ufo.body.setCollisionGroup(ufoColGroup);
+	
  
 	background.update = function() {
 		this.angle += this.angularSpeed;
@@ -92,11 +101,6 @@ mainGameState.create = function (){
 	night.update = function(){
 		this.angle += this.angularSpeed;
 	}
-
-	ufo.update = function(){
-		this.angle += this.angularSpeed;
-		this.pivot.y *= 1 - 1/10000
-	};
 
 	this.game.world.addChild(moon);
 	this.game.world.addChild(ufo);
