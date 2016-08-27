@@ -46,8 +46,8 @@ mainGameState.create = function (){
 	ufo.height = 64;
 	ufo.width = 64;
 
-	ufo.angularSpeed = 1.2;
-	
+	ufo.angularSpeed = 0.5;
+ 
 	earth.update = function(){
 		this.angle += this.angularSpeed;
 	} 
@@ -58,8 +58,7 @@ mainGameState.create = function (){
 
 	ufo.update = function(){
 		this.angle += this.angularSpeed;
-		
-		this.pivot.y *= 0.999
+		this.pivot.y *= 1 - 1/10000
 	}
 
 	earthGroup.addChild(earth);
