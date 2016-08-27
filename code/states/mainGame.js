@@ -11,6 +11,8 @@ mainGameState.preload = function (){
 mainGameState.create = function (){
 	this.game.world.setBounds(-this.game.width/2,-this.game.height/2,this.game.width,this.game.height);
 	
+	this.game.physics.startSystem(Phaser.Physics.P2JS);
+	
 	earthGroup = new EarthGroup(this.game, {"earth" : "earth","pyramid" : "pyramida"});
 	
 	this.game.world.addChild(earthGroup);
@@ -26,7 +28,11 @@ mainGameState.create = function (){
 	moon.height = 70;
 	moon.width = 70;
 	
-	moon.angularSpeed = 1/14;
+	moon.angularVelocity = 1/14;
+	
+	this.game.physics.p2.enable(moon, false);
+	moon.body.setCircle(moon.width/2, 0, -200);
+	moon.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
 	
 	//UFO
 	ufo = new Phaser.Sprite(this.game, 0, 0, "ufo");
@@ -40,10 +46,6 @@ mainGameState.create = function (){
 	ufo.width = 64;
 	
 	ufo.angularSpeed = 0.5;
-	
-	moon.update = function(){
-		this.angle += this.angularSpeed;
-	}
 
 	ufo.update = function(){
 		this.angle += this.angularSpeed;

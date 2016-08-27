@@ -7,13 +7,12 @@ function EarthGroup(game, textureNames){
 	
 	this.earth.height = 200;
 	this.earth.width = 200;
-	/// Otestovat, jestli takhle nebo odmocninou
-	this.earthRadius = this.earth.width;
 	
-	this.earth.angularSpeed = 1;
-	this.earth.update = function(){
-		this.angle += this.angularSpeed;
-	}
+	/// Physics (druhý argument je debug)
+	this.game.physics.p2.enable(this.earth, false);
+	this.earth.body.angularVelocity = 1;
+	this.earth.body.setCircle(this.earth.width/2);
+	this.earth.body.motionState = this.earth.body.KINEMATIC;
 	
 	this.addChild(this.earth);
 	/// Handler pro přidávání struktur
