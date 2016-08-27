@@ -4,6 +4,7 @@ mainGameState.preload = function (){
 	this.game.load.path = "assets/";
 	this.game.load.image("earth","planetEarth.png");
 	this.game.load.image("moon", "moon.png")
+	this.game.load.image("ufo", "ufo.png")
 }
 
 mainGameState.create = function (){
@@ -11,6 +12,7 @@ mainGameState.create = function (){
 	
 	earthGroup = this.game.add.group(this.game.world, "earthGroup");
 	
+	//EARTH
 	earth = new Phaser.Sprite(this.game, 0,0,"earth");
 	earth.anchor.x = 0.5;
 	earth.anchor.y = 0.5;
@@ -20,8 +22,7 @@ mainGameState.create = function (){
 	
 	earth.angularSpeed = 1;
 	
-
-	
+	//MOON
 	moon = new Phaser.Sprite(this.game, 0, 0, "moon");
 	moon.anchor.x = 0.5;
 	moon.anchor.y = 0.5;
@@ -34,6 +35,19 @@ mainGameState.create = function (){
 
 	moon.angularSpeed = 1/14;
 	
+	//UFO
+	ufo = new Phaser.Sprite(this.game, 0, 0, "ufo");
+	ufo.anchor.x = 0.5;
+	ufo.anchor.y = 0.5;
+
+	ufo.pivot.x = 0;
+	ufo.pivot.y = 300;
+	
+	ufo.height = 64;
+	ufo.width = 64;
+
+	ufo.angularSpeed = 1.2;
+	
 	earth.update = function(){
 		this.angle += this.angularSpeed;
 	} 
@@ -42,6 +56,13 @@ mainGameState.create = function (){
 		this.angle += this.angularSpeed;
 	}
 
+	ufo.update = function(){
+		this.angle += this.angularSpeed;
+		
+		this.pivot.y *= 0.999
+	}
+
 	earthGroup.addChild(earth);
 	this.game.world.addChild(moon);
+	this.game.world.addChild(ufo)
 }
