@@ -41,8 +41,15 @@ mainGameState.create = function (){
 	this.game.world.addChild(background);
 
 	//EARTH GROUP
-	earthGroup = new EarthGroup(this.game, {"earth" : "earth","pyramid" : "pyramida"});
-
+	var earthGroup = new EarthGroup(this.game, {"earth" : "earth","pyramid" : "pyramida"});
+	
+	this.game.resourceManager = new ResourceManager(this.game, earthGroup);
+	
+	// CollisionGroups
+	
+	otherColGroup = this.game.physics.p2.createCollisionGroup();
+	ufoColGroup = this.game.physics.p2.createCollisionGroup();
+	
 	//NIGHT
 	night = new Phaser.Sprite(this.game, 0,0,"night");
 	night.anchor.x = 0.5;
@@ -70,9 +77,6 @@ mainGameState.create = function (){
 	moon.body.setCircle(moon.width/2, 0, -200);
 	moon.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
 	moon.body.angularVelocity = 1/14;
-	
-	ufoColGroup = this.game.physics.p2.createCollisionGroup();
-	otherColGroup = this.game.physics.p2.createCollisionGroup();
 	
 	moon.body.setCollisionGroup(otherColGroup);
 	moon.body.collides([ufoColGroup]);
@@ -107,4 +111,3 @@ mainGameState.create = function (){
 	this.game.world.addChild(night);
 
 };
-

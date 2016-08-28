@@ -8,7 +8,7 @@ function EarthGroup(game, textureNames){
 	this.earth.height = 200;
 	this.earth.width = 200;
 	
-	this.earthRadius = this.earth.width/2;
+	this.earth.radius = this.earth.width/2;
 	
 	/// Physics (druhý argument je debug)
 	this.game.physics.p2.enable(this.earth, false);
@@ -23,25 +23,12 @@ function EarthGroup(game, textureNames){
 		var y = this.game.input.activePointer.worldY;
 		var point = new Phaser.Point(-x,-y);
 		var clickAngle = this.game.math.radToDeg(point.angle({x : 1, y : 0}));
-		earthGroup.addStructure(clickAngle - earthGroup.earth.angle, "pyramida");
-	});
+		this.game.resourceManager.buildStructure("pyramid", clickAngle);
+	}, this);
 }
 EarthGroup.prototype = Object.create( Phaser.Group.prototype );
 
-EarthGroup.prototype.addStructure = function (angle, textureName){
+EarthGroup.prototype.addStructure = function (angle, textureName){console.log("add");
 	/// Zatím jenom pyramida
-	var structure = new Phaser.Sprite(this.game, 0, 0, textureName);
-	
-	structure.anchor.x = 0.5;
-	structure.anchor.y = 1.0;
-	
-	structure.position.x = this.earthRadius/(this.earth.scale.x)*Math.cos(this.game.math.degToRad(angle));
-	structure.position.y = this.earthRadius/(this.earth.scale.y)*Math.sin(this.game.math.degToRad(angle));
-	
-	structure.width = structure.width/this.earth.scale.x;
-	structure.height = structure.height/this.earth.scale.y;
-	
-	structure.angle = angle+90;
-	
-	this.earth.addChild(structure);
+	this.earth.addChild(new EarthStructure(this.game, this.earth, angle, "pyramida"));
 }
