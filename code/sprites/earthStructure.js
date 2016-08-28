@@ -1,6 +1,11 @@
-function EarthStructure(game, earth, plainAngle, textureName, bulletOptions){
-	Phaser.Sprite.call(this, game, 0,0,textureName);
+function EarthStructure(game, earth, plainAngle, buildingClass){
 	
+	this.buildingClass = buildingClass;
+	
+	this.textureName = game.structuresManager.structures[this.buildingClass].textureName
+	
+	Phaser.Sprite.call(this, game, 0,0,this.textureName);
+	// Odečíst za rotaci planety
 	var angle = plainAngle - earth.angle;
 	
 	this.earth = earth;
@@ -11,18 +16,21 @@ function EarthStructure(game, earth, plainAngle, textureName, bulletOptions){
 	this.x = earth.radius/(earth.scale.x)*Math.cos(this.game.math.degToRad(angle));
 	this.y = earth.radius/(earth.scale.y)*Math.sin(this.game.math.degToRad(angle));
 	
-	this.width = this.width/earth.scale.x;
-	this.height = this.height/earth.scale.y;
-	
-	this.angle = angle + 90;
+	this.width = this.width*2/earth.scale.x;
+	this.height = this.height*2/earth.scale.y;
+	// Rotace samotné budovy
+	this.angle = angle + 90;//this.game.earthGroup.getEarthBaseAngle();
 	
 	this.inputEnabled = true;
 	
-	this.weapon = new ParticleEmitter(this.game, "weapon", {x : 0, y : 0}, bulletOptions);
+	this.bulletOptions = game.structuresManager.structures[this.buildingClass].bulletOptions;
+	this.bulletNumber = game.structuresManager.structures[this.buildingClass].bulletNumber;
+	this.weapon = new ParticleEmitter(this.game, "weapon", {x : 0, y : 0}, this.bulletOptions);
 	this.addChild(this.weapon);
 	
 	this.events.onInputDown.add(function(){
-		this.weapon.startStream(1);
+		if(this.buildingDone)
+			this.weapon.startStream(this.bulletNumber);
 	}, this);
 	
 }

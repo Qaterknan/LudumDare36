@@ -87,11 +87,8 @@ ParticleEmitter.prototype.emitParticle = function (eX,eY, rewriteOptions){
 	// Typ střely
 	p.body.motionState = this.game.collisionManager.motionStates[this.options.motionState];
 	
-	var collisionGroupsKeys = this.game.collisionManager.collisionMap[this.options.collisionGroup];
 	// Kolizní callbacky
-	for(var i in collisionGroupsKeys){
-		p.body.createGroupCallback(this.game.collisionManager.groups[collisionGroupsKeys[i]], this.options.collisionCallbacks[collisionGroupsKeys[i]], p);
-	}
+	this.game.collisionManager.setCollisionCallbacks(p, this.options.collisionCallbacks);
 	// Debug rámec
 	p.body.debug = true;
 	// Ničení na killu

@@ -3,10 +3,11 @@ var mainGameState = new Phaser.State();
 mainGameState.preload = function (){
 	this.game.load.path = "assets/";
 
-	this.game.load.image("earth","planetEarth.png");
+	this.game.load.image("earth","earth2.png");
 	this.game.load.image("moon", "moon.png");
-	this.game.load.image("ufo", "ufo.png");
-	this.game.load.image("pyramida", "egypt.png");
+	this.game.load.image("hatak", "hatak.png");
+	this.game.load.image("pyramida", "egypt2.png");
+	this.game.load.image("aztec", "aztec.png");
 	this.game.load.image("background", "bg.png");
 	this.game.load.image("night", "shadowEarth.png")
 	this.game.load.image("basicBullet", "basicBullet.png")
@@ -46,9 +47,13 @@ mainGameState.create = function (){
 
 	this.game.world.addChild(background);
 
+	// Collision Manager
+	
+	this.game.collisionManager = new CollisionManager(this.game.physics.p2);
+	
 	// EARTH GROUP
 	
-	this.game.earthGroup = new EarthGroup(this.game, {"earth" : "earth","pyramid" : "pyramida"});
+	this.game.earthGroup = new EarthGroup(this.game, {"earth" : "earth","pyramid" : "pyramida", "aztec" : "aztec",});
 	
 	this.game.world.addChild(this.game.earthGroup);
 	
@@ -56,9 +61,31 @@ mainGameState.create = function (){
 	
 	this.game.resourceManager = new ResourceManager(this.game);
 	
-	// Collision Manager
+	// Building Manager
 	
-	this.game.collisionManager = new CollisionManager(this.game.physics.p2);
+	this.game.structuresManager = new StructuresManager(this.game, this.game.earthGroup);
+	
+	// Handler pro přidávání struktur
+	this.game.input.onTap.add(function(){
+		var x = this.game.input.activePointer.worldX;
+		var y = this.game.input.activePointer.worldY;
+		var clickAngle = this.getSimpleAngle(x,y);
+		// Nahradí se ID z nějakého GUI
+		var structureID = "pyramid"
+		
+		var canBuild = this.game.resourceManager.buildStructure(structureID);
+		if(canBuild){
+			var newStructure = new EarthStructure(
+				this.game,
+				this.game.earthGroup.earth,
+				clickAngle,
+				structureID
+			);
+			this.game.earthGroup.earth.addChild(newStructure);
+			
+			this.game.structuresManager.build(newStructure);
+		}
+	}, this.game.earthGroup);
 	
 	//NIGHT
 	night = new Phaser.Sprite(this.game, 0,0,"night");
@@ -78,6 +105,7 @@ mainGameState.create = function (){
 	
 	//MOON
 	moon = new Phaser.Sprite(this.game, 0, 0, "moon");
+	this.game.moon = moon;
 	moon.anchor.x = 0.5;
 	moon.anchor.y = 0.5;
 
@@ -97,22 +125,20 @@ mainGameState.create = function (){
 	this.game.world.addChild(moon);
 	
 	//UFO - poté odstranit
-	ufo = new Phaser.Sprite(this.game, 0, 0, "ufo");
-	ufo.anchor.x = 0.5;
-	ufo.anchor.y = 0.5;
-	
-	ufo.pivot.x = -100;
-	ufo.pivot.y = 200;
-	
-	ufo.height = 64;
-	ufo.width = 64;
+	ufo = new UFO(this.game, "hatak", 500,0);
 	
 	this.game.physics.p2.enable(ufo, this.game.collisionManager.debug);
-	ufo.body.setRectangle(48,48,100,-200);
+	
+	ufo.body.setRectangle(48,48);
+	
+	//ufo.body.velocity.y = 500;
+	ufo.body.mass = 1;
+	
+	this.game.physics.p2.createSpring(ufo.body, this.game.earthGroup.earth.body, this.game.earthGroup.earth.radius, 2, 0.0001);
+	
 	this.game.collisionManager.setCollisionsByClass(ufo, "ufo", false);
 	
-	ufo.body.motionState = this.game.collisionManager.motionStates.kinematic;
+	ufo.body.motionState = this.game.collisionManager.motionStates.dynamic;
 	
 	this.game.world.addChild(ufo);
-	
 };

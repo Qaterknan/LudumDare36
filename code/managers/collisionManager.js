@@ -7,6 +7,7 @@ function CollisionManager (physics){
 	this.groupList = [
 		"ufo",
 		"moon",
+		"moonFlail",
 		"earth",
 		"bullet",
 		"laser",
@@ -25,12 +26,16 @@ function CollisionManager (physics){
 	
 	this.collisionMap = {
 		ufo : [
-			"moon",
+			"moonFlail",
 			"earth",
 			"bullet",
 			"laser"
 		],
 		moon : [
+			"bullet",
+			"other"
+		],
+		moonFlail : [
 			"ufo",
 			"bullet",
 			"other"
@@ -42,12 +47,14 @@ function CollisionManager (physics){
 		bullet : [
 			"ufo",
 			"moon",
+			"moonFlail",
 		],
 		laser : [
 			"ufo"
 		],
 		other : [
 			"moon",
+			"moonFlail",
 			"earth"
 		],
 	};
@@ -75,4 +82,10 @@ CollisionManager.prototype.setCollisionsByClass = function (sprite, class_id, en
 	}
 	sprite.body.setCollisionGroup(this.groups[class_id]);
 	sprite.body.collides(this.getCollides(class_id));
+}
+
+CollisionManager.prototype.setCollisionCallbacks = function (sprite, classObject){
+	for(var i in classObject){
+		sprite.body.createGroupCallback(this.groups[i], classObject[i], sprite);
+	}
 }
