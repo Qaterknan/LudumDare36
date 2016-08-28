@@ -92,7 +92,7 @@ mainGameState.create = function (){
 	moon.body.motionState = this.game.collisionManager.motionStates.kinematic;
 	moon.body.angularVelocity = 1/14;
 	
-	this.game.collisionManager.setCollisionsByClass(moon.body, "moon", false);
+	this.game.collisionManager.setCollisionsByClass(moon, "moon", false);
 	
 	this.game.world.addChild(moon);
 	
@@ -109,7 +109,9 @@ mainGameState.create = function (){
 	
 	this.game.physics.p2.enable(ufo, this.game.collisionManager.debug);
 	ufo.body.setRectangle(48,48,100,-200);
-	this.game.collisionManager.setCollisionsByClass(ufo.body, "ufo", false);
+	this.game.collisionManager.setCollisionsByClass(ufo, "ufo", false);
+	
+	ufo.body.motionState = this.game.collisionManager.motionStates.kinematic;
 	
 	this.game.world.addChild(ufo);
 	

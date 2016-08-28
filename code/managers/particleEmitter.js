@@ -6,7 +6,7 @@ function ParticleEmitter (game, name, position, particleOptions){
 	
 	this.options = {};
 	
-	this.options.collisionGroup = "bulletColGroup";
+	this.options.collisionGroup = "bullet";
 	
 	this.options.textureName =  "";
 	
@@ -16,7 +16,7 @@ function ParticleEmitter (game, name, position, particleOptions){
 	
 	this.options.lifespan = 5000;
 	
-	this.options.collisionCallback = function (){};
+	this.options.collisionCallbacks = {};
 	
 	this.options.motionState = "dynamic";
 	
@@ -78,21 +78,19 @@ ParticleEmitter.prototype.emitParticle = function (eX,eY, rewriteOptions){
 	
 	this.game.world.addChild(p);
 	// Physics vlastnosti
-	this.game.physics.p2.enable(p);
+	// Kolize
+	this.game.collisionManager.setCollisionsByClass(p, this.options.collisionGroup, true);
 	// Rychlost
 	p.body.velocity.x = this.options.initialVelocity.x + (this.randomizer.velocity === undefined ? 0 : this.game.rnd.between(this.randomizer.velocity.x.low, this.randomizer.velocity.x.high));
 	p.body.velocity.y = this.options.initialVelocity.y + (this.randomizer.velocity === undefined ? 0 : this.game.rnd.between(this.randomizer.velocity.y.low, this.randomizer.velocity.y.high));
 	// Kolize
 	// Typ střely
 	p.body.motionState = this.game.collisionManager.motionStates[this.options.motionState];
-	// Skupina střely
-	p.body.setCollisionGroup(this.game.collisionManager.groups[this.options.collisionGroup]);
-	// S kým koliduje?
-	var collisionGroups = this.game.collisionManager.getCollides(this.options.collisionGroup);
-	p.body.collides(collisionGroups);
+	
+	var collisionGroupsKeys = this.game.collisionManager.collisionMap[this.options.collisionGroup];
 	// Kolizní callbacky
-	for(var i in collisionGroups){
-		p.body.createGroupCallback(collisionGroups[i], this.options.collisionCallback, p);
+	for(var i in collisionGroupsKeys){
+		p.body.createGroupCallback(this.game.collisionManager.groups[collisionGroupsKeys[i]], this.options.collisionCallbacks[collisionGroupsKeys[i]], p);
 	}
 	// Debug rámec
 	p.body.debug = true;

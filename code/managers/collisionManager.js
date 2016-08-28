@@ -69,10 +69,10 @@ CollisionManager.prototype.getCollides = function (id){
 	return result;
 }
 
-CollisionManager.prototype.setCollisionsByClass = function (p2Body, class_id, enablePhysics){
+CollisionManager.prototype.setCollisionsByClass = function (sprite, class_id, enablePhysics){
 	if(enablePhysics){
-		this.physics.enable(p2Body, this.debug);
+		this.physics.enable(sprite, this.debug);
 	}
-	p2Body.setCollisionGroup(this.groups[class_id]);
-	p2Body.collides(this.getCollides(class_id));
+	sprite.body.setCollisionGroup(this.groups[class_id]);
+	sprite.body.collides(this.getCollides(class_id));
 }
