@@ -2,15 +2,17 @@ var mainGameState = new Phaser.State();
 
 mainGameState.preload = function (){
 	this.game.load.path = "assets/";
-
-	this.game.load.image("earth","earth2.png");
+	
+	this.game.load.image("earth","earth.png");
 	this.game.load.image("moon", "moon.png");
 	this.game.load.image("hatak", "hatak.png");
 	this.game.load.image("pyramida", "egypt2.png");
 	this.game.load.image("aztec", "aztec.png");
 	this.game.load.image("background", "bg.png");
-	this.game.load.image("night", "shadowEarth.png")
-	this.game.load.image("basicBullet", "basicBullet.png")
+	this.game.load.image("night", "shadowEarth.png");
+	this.game.load.image("basicBullet", "basicBullet.png");
+	
+	this.game.load.spritesheet("selectorButton", "buildButton.png", 18, 18);
 }
 
 mainGameState.create = function (){
@@ -61,9 +63,14 @@ mainGameState.create = function (){
 	
 	this.game.resourceManager = new ResourceManager(this.game);
 	
-	// Building Manager
+	// Structures Manager
 	
 	this.game.structuresManager = new StructuresManager(this.game, this.game.earthGroup);
+	
+	// GUI Manager
+	
+	this.game.guiManager = new GUIManager(this.game);
+	this.game.guiManager.createSelectorPanel();
 	
 	// Handler pro přidávání struktur
 	this.game.input.onTap.add(function(){

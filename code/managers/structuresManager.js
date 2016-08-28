@@ -20,7 +20,7 @@ function StructuresManager(game, earth){
 			},
 			bulletNumber : 5,
 		},
-		aztek : {
+		aztec : {
 			textureName : "aztec",
 			time : 4500,
 		},
