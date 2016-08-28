@@ -13,15 +13,15 @@ mainGameState.preload = function (){
 }
 
 mainGameState.create = function (){
-	
+	// Fyzika
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
 	this.game.physics.p2.setImpactEvents(true);
-	
+	// Užitečné proměnné
 	var width = this.game.width;
 	var height = this.game.height;
 	this.game.world.setBounds(-width/2,-height/2,width,height);
 
-	//STAR GROUP
+	//STAR GROUP - pomalu rotující pozadí
 	var starGroup
 	var background = new Phaser.Sprite(this.game, 0, 0, "background");
 	background.anchor.x = 0.5;
@@ -39,19 +39,26 @@ mainGameState.create = function (){
 	background.z;
 
 	background.angularSpeed = 1/50;
+	
+	background.update = function() {
+		this.angle += this.angularSpeed;
+	};
 
 	this.game.world.addChild(background);
 
-	//EARTH GROUP
-	var earthGroup = new EarthGroup(this.game, {"earth" : "earth","pyramid" : "pyramida"});
+	// EARTH GROUP
 	
-	this.game.resourceManager = new ResourceManager(this.game, earthGroup);
+	this.game.earthGroup = new EarthGroup(this.game, {"earth" : "earth","pyramid" : "pyramida"});
 	
-	// CollisionGroups
+	this.game.world.addChild(this.game.earthGroup);
+	
+	// Resource Manager
+	
+	this.game.resourceManager = new ResourceManager(this.game);
+	
+	// Collision Manager
 	
 	this.game.collisionManager = new CollisionManager(this.game.physics.p2);
-	otherColGroup = this.game.collisionManager.groups.otherColGroup;
-	ufoColGroup = this.game.collisionManager.groups.ufoColGroup;
 	
 	//NIGHT
 	night = new Phaser.Sprite(this.game, 0,0,"night");
@@ -63,7 +70,11 @@ mainGameState.create = function (){
 	
 	night.angularSpeed = 0.01;
 	
-	this.game.world.addChild(earthGroup);
+	this.game.earthGroup.addChild(night);
+	
+	night.update = function(){
+		this.angle += this.angularSpeed;
+	}
 	
 	//MOON
 	moon = new Phaser.Sprite(this.game, 0, 0, "moon");
@@ -76,15 +87,16 @@ mainGameState.create = function (){
 	moon.height = 70;
 	moon.width = 70;
 	
-	this.game.physics.p2.enable(moon, false);
-	moon.body.setCircle(moon.width/2, 0, -200);
-	moon.body.motionState = Phaser.Physics.P2.Body.KINEMATIC;
+	this.game.physics.p2.enable(moon, this.game.collisionManager.debug);
+	moon.body.setCircle(moon.width/2, -moon.pivot.x, -moon.pivot.y);
+	moon.body.motionState = this.game.collisionManager.motionStates.kinematic;
 	moon.body.angularVelocity = 1/14;
 	
-	moon.body.setCollisionGroup(otherColGroup);
-	moon.body.collides([ufoColGroup]);
+	this.game.collisionManager.setCollisionsByClass(moon.body, "moon", false);
 	
-	//UFO
+	this.game.world.addChild(moon);
+	
+	//UFO - poté odstranit
 	ufo = new Phaser.Sprite(this.game, 0, 0, "ufo");
 	ufo.anchor.x = 0.5;
 	ufo.anchor.y = 0.5;
@@ -95,22 +107,10 @@ mainGameState.create = function (){
 	ufo.height = 64;
 	ufo.width = 64;
 	
-	this.game.physics.p2.enable(ufo, true);
-	ufo.body.collides([otherColGroup]);
+	this.game.physics.p2.enable(ufo, this.game.collisionManager.debug);
 	ufo.body.setRectangle(48,48,100,-200);
-	ufo.body.setCollisionGroup(ufoColGroup);
+	this.game.collisionManager.setCollisionsByClass(ufo.body, "ufo", false);
 	
- 
-	background.update = function() {
-		this.angle += this.angularSpeed;
-	};
-
-	night.update = function(){
-		this.angle += this.angularSpeed;
-	}
-
-	this.game.world.addChild(moon);
 	this.game.world.addChild(ufo);
-	this.game.world.addChild(night);
-
+	
 };

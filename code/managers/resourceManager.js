@@ -1,8 +1,7 @@
-function ResourceManager(game, earthGroup){
+function ResourceManager(game){
 	this.resourceAvailable = 10;
 	
 	this.game = game;
-	this.earthGroup = earthGroup;
 	
 	this.structureRequirements = {
 		"pyramid" : 10,

@@ -1,26 +1,26 @@
-function ParticleEmitter (game, name, position, _particleOptions){
+function ParticleEmitter (game, name, position, particleOptions){
 	Phaser.Group.call(this, game, null, name, false, true, Phaser.Physics.P2JS);
 	
 	this.x = position.x === undefined ? 0 : position.x;
 	this.y = position.y === undefined ? 0 : position.y;
 	
-	var particleOptions = _particleOptions === undefined ? {} : _particleOptions;
-	
 	this.options = {};
 	
-	this.options.collisionGroup = particleOptions.collisionGroup === undefined ? this.game.physics.p2.createCollisionGroup() : particleOptions.collisionGroup;
+	this.options.collisionGroup = "bulletColGroup";
 	
-	this.options.collides = particleOptions.collides === undefined ? [] : particleOptions.collides;
+	this.options.textureName =  "";
 	
-	this.options.textureName = particleOptions.textureName === undefined ? "" : particleOptions.textureName;
+	this.options.size = {width : 32, height : 32};
 	
-	this.options.size = particleOptions.size === undefined ? {width : 32, height : 32} : particleOptions.size;
+	this.options.initialVelocity = {x : 0, y : 0};
 	
-	this.options.initialVelocity = particleOptions.velocity === undefined ? {x : 0, y : 0} : particleOptions.velocity
+	this.options.lifespan = 5000;
 	
-	this.options.lifespan = particleOptions.lifespan === undefined ? 5000 : particleOptions.lifespan;
+	this.options.collisionCallback = function (){};
 	
-	this.options.callback = particleOptions.collisionCallback === undefined ? function (){console.log("collision");} : particleOptions.collisionCallback;
+	this.options.motionState = "dynamic";
+	
+	this.insertIntoDefault(particleOptions, this.options);
 	
 	this.emitInterval = particleOptions.interval === undefined ? 100 : particleOptions.interval;
 	
@@ -75,26 +75,30 @@ ParticleEmitter.prototype.emitParticle = function (eX,eY, rewriteOptions){
 	p.height = this.options.size.height + (this.randomizer.size === undefined ? 0 : this.game.rnd.between(this.randomizer.size.low, this.randomizer.size.high));
 	
 	p.lifespan = this.options.lifespan + (this.randomizer.lifespan === undefined ? 0 : this.game.rnd.between(this.randomizer.lifespan.low, this.randomizer.lifespan.high));
-	/// Physics vlastnosti
+	
 	this.game.world.addChild(p);
-	
+	// Physics vlastnosti
 	this.game.physics.p2.enable(p);
-	
+	// Rychlost
 	p.body.velocity.x = this.options.initialVelocity.x + (this.randomizer.velocity === undefined ? 0 : this.game.rnd.between(this.randomizer.velocity.x.low, this.randomizer.velocity.x.high));
 	p.body.velocity.y = this.options.initialVelocity.y + (this.randomizer.velocity === undefined ? 0 : this.game.rnd.between(this.randomizer.velocity.y.low, this.randomizer.velocity.y.high));
-	
+	// Kolize
+	// Typ střely
+	p.body.motionState = this.game.collisionManager.motionStates[this.options.motionState];
+	// Skupina střely
 	p.body.setCollisionGroup(this.game.collisionManager.groups[this.options.collisionGroup]);
-	var collisionGroups = this.game.collisionManager.makeCollides(this.options.collides);
+	// S kým koliduje?
+	var collisionGroups = this.game.collisionManager.getCollides(this.options.collisionGroup);
 	p.body.collides(collisionGroups);
-	
+	// Kolizní callbacky
 	for(var i in collisionGroups){
-		p.body.createGroupCallback(collisionGroups[i], this.options.callback, p);
+		p.body.createGroupCallback(collisionGroups[i], this.options.collisionCallback, p);
 	}
-	
+	// Debug rámec
 	p.body.debug = true;
-	
+	// Ničení na killu
 	p.events.onKilled.add(function(){this.destroy();}, p);
-	
+	// Zpětné nastavení options
 	this.options = optionsBuffer;
 }
 

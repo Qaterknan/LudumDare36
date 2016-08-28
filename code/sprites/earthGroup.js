@@ -25,7 +25,7 @@ function EarthGroup(game, textureNames){
 		var clickAngle = this.game.math.radToDeg(point.angle({x : 1, y : 0}));
 		var canBuild = this.game.resourceManager.buildStructure("pyramid", clickAngle);
 		if(canBuild)
-			this.addStructure(clickAngle, this.textureNames["pyramid"], {textureName : "basicBullet", collisionGroup : "ufoColGroup", collides : ["otherColGroup"], collisionCallback : function (){console.log("hello");},});
+			this.addStructure(clickAngle, this.textureNames["pyramid"], {textureName : "basicBullet", collisionGroup : "bullet", collisionCallback : function (){console.log("hello");},});
 	}, this);
 	
 	this.textureNames = textureNames;
