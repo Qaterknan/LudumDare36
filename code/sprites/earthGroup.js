@@ -23,12 +23,23 @@ function EarthGroup(game, textureNames){
 		var y = this.game.input.activePointer.worldY;
 		var point = new Phaser.Point(-x,-y);
 		var clickAngle = this.game.math.radToDeg(point.angle({x : 1, y : 0}));
-		this.game.resourceManager.buildStructure("pyramid", clickAngle);
+		var canBuild = this.game.resourceManager.buildStructure("pyramid", clickAngle);
+		if(canBuild)
+			this.addStructure(clickAngle, this.textureNames["pyramid"], {textureName : "basicBullet", collisionGroup : "ufoColGroup", collides : ["otherColGroup"], collisionCallback : function (){console.log("hello");},});
 	}, this);
+	
+	this.textureNames = textureNames;
 }
 EarthGroup.prototype = Object.create( Phaser.Group.prototype );
 
-EarthGroup.prototype.addStructure = function (angle, textureName){console.log("add");
+EarthGroup.prototype.addStructure = function (angle, textureName, bulletOptions){
 	/// Zatím jenom pyramida
-	this.earth.addChild(new EarthStructure(this.game, this.earth, angle, "pyramida"));
+	this.earth.addChild(new EarthStructure(this.game, this.earth, angle, textureName, bulletOptions));
+}
+
+EarthGroup.prototype.update = function (){
+	for(var i in this.children){
+		this.children[i].update();
+		this.update.call(this.children[i]);
+	}
 }

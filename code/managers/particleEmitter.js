@@ -6,19 +6,21 @@ function ParticleEmitter (game, name, position, _particleOptions){
 	
 	var particleOptions = _particleOptions === undefined ? {} : _particleOptions;
 	
-	this.particleCollisionGroup = particleOptions.collisionGroup === undefined ? this.game.physics.p2.createCollisionGroup() : particleOptions.collisionGroup;
+	this.options = {};
 	
-	this.collides = particleOptions.collides === undefined ? [] : particleOptions.collides;
+	this.options.collisionGroup = particleOptions.collisionGroup === undefined ? this.game.physics.p2.createCollisionGroup() : particleOptions.collisionGroup;
 	
-	this.particleTextureName = particleOptions.textureName === undefined ? "" : particleOptions.textureName;
+	this.options.collides = particleOptions.collides === undefined ? [] : particleOptions.collides;
 	
-	this.particleSize = particleOptions.size === undefined ? {width : 32, height : 32} : particleOptions.size;
+	this.options.textureName = particleOptions.textureName === undefined ? "" : particleOptions.textureName;
 	
-	this.particleInitialVelocity = particleOptions.velocity === undefined ? {x : 0, y : 0} : particleOptions.velocity
+	this.options.size = particleOptions.size === undefined ? {width : 32, height : 32} : particleOptions.size;
 	
-	this.particleLifespan = particleOptions.lifespan === undefined ? 5000 : particleOptions.lifespan;
+	this.options.initialVelocity = particleOptions.velocity === undefined ? {x : 0, y : 0} : particleOptions.velocity
 	
-	this.collisionCallback = particleOptions.collisionCallback === undefined ? function (){console.log("collision");} : particleOptions.collisionCallback;
+	this.options.lifespan = particleOptions.lifespan === undefined ? 5000 : particleOptions.lifespan;
+	
+	this.options.callback = particleOptions.collisionCallback === undefined ? function (){console.log("collision");} : particleOptions.collisionCallback;
 	
 	this.emitInterval = particleOptions.interval === undefined ? 100 : particleOptions.interval;
 	
@@ -50,38 +52,57 @@ function ParticleEmitter (game, name, position, _particleOptions){
 }
 ParticleEmitter.prototype = Object.create( Phaser.Group.prototype );
 
-ParticleEmitter.prototype.emitParticle = function (eX,eY){
+ParticleEmitter.prototype.emitParticle = function (eX,eY, rewriteOptions){
+	/// Specifické vlastnosti při daném volání
+	var optionsBuffer = {};
+	this.insertIntoDefault(this.options, optionsBuffer);
+	this.insertIntoDefault(rewriteOptions, this.options);
+	
 	/// Pokud nejsou souřadnice, použít souřadnice emitteru
 	var x = eX === undefined ? this.x : eX;
 	var y = eY === undefined ? this.y : eY;
+	/// Je třeba přidávat rovnou do světa, aby byli nezávislé
+	if(this.parent){
+		x = x + this.parent.world.x;
+		y = y + this.parent.world.y;
+	}
+	
 	/// Nová particle
 	/// Sprite vlastnosti
-	var p = new Phaser.Particle(this.game, x, y, this.particleTextureName);
+	var p = new Phaser.Particle(this.game, x, y, this.options.textureName);
 	
-	p.width = this.particleSize.width + (this.randomizer.size === undefined ? 0 : this.game.rnd.between(this.randomizer.size.low, this.randomizer.size.high));
-	p.height = this.particleSize.height + (this.randomizer.size === undefined ? 0 : this.game.rnd.between(this.randomizer.size.low, this.randomizer.size.high));
+	p.width = this.options.size.width + (this.randomizer.size === undefined ? 0 : this.game.rnd.between(this.randomizer.size.low, this.randomizer.size.high));
+	p.height = this.options.size.height + (this.randomizer.size === undefined ? 0 : this.game.rnd.between(this.randomizer.size.low, this.randomizer.size.high));
 	
-	p.lifespan = this.particleLifespan + (this.randomizer.lifespan === undefined ? 0 : this.game.rnd.between(this.randomizer.lifespan.low, this.randomizer.lifespan.high));
+	p.lifespan = this.options.lifespan + (this.randomizer.lifespan === undefined ? 0 : this.game.rnd.between(this.randomizer.lifespan.low, this.randomizer.lifespan.high));
 	/// Physics vlastnosti
-	this.add(p);
+	this.game.world.addChild(p);
 	
-	p.body.offset.x = -x;
-	p.body.offset.y = -y;
+	this.game.physics.p2.enable(p);
 	
-	p.body.velocity.x = this.particleInitialVelocity.x + (this.randomizer.velocity === undefined ? 0 : this.game.rnd.between(this.randomizer.velocity.x.low, this.randomizer.velocity.x.high));
-	p.body.velocity.y = this.particleInitialVelocity.y + (this.randomizer.velocity === undefined ? 0 : this.game.rnd.between(this.randomizer.velocity.y.low, this.randomizer.velocity.y.high));
+	p.body.velocity.x = this.options.initialVelocity.x + (this.randomizer.velocity === undefined ? 0 : this.game.rnd.between(this.randomizer.velocity.x.low, this.randomizer.velocity.x.high));
+	p.body.velocity.y = this.options.initialVelocity.y + (this.randomizer.velocity === undefined ? 0 : this.game.rnd.between(this.randomizer.velocity.y.low, this.randomizer.velocity.y.high));
 	
-	p.body.setCollisionGroup(this.particleCollisionGroup);
-	p.body.collides(this.collides, this.collisionCallback);
+	p.body.setCollisionGroup(this.game.collisionManager.groups[this.options.collisionGroup]);
+	var collisionGroups = this.game.collisionManager.makeCollides(this.options.collides);
+	p.body.collides(collisionGroups);
+	
+	for(var i in collisionGroups){
+		p.body.createGroupCallback(collisionGroups[i], this.options.callback, p);
+	}
 	
 	p.body.debug = true;
 	
 	p.events.onKilled.add(function(){this.destroy();}, p);
+	
+	this.options = optionsBuffer;
 }
 
 ParticleEmitter.prototype.insertIntoDefault = function (object, changingObject){
 	for(var prop in object){
-		if(object[prop] instanceof Object){
+		if(object[prop] instanceof Object && !(object[prop] instanceof Function || object[prop] instanceof Array)){
+			if(changingObject[prop] === undefined)
+				changingObject[prop] = {};
 			this.insertIntoDefault(object[prop], changingObject[prop]);
 		}
 		else{
@@ -102,8 +123,8 @@ ParticleEmitter.prototype.startStream = function(n){
 		this.emittingTimer.loop(this.emitInterval, function(){this.emitParticle();}, this);
 	}
 	else{
-		if(n > 0){
-			this.emitParticle();
+		this.emitParticle();
+		if(n > 1){
 			this.emittingTimer.repeat(this.emitInterval, n-1, function(){this.emitParticle();}, this);
 		}
 	}

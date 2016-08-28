@@ -9,11 +9,13 @@ mainGameState.preload = function (){
 	this.game.load.image("pyramida", "egypt.png");
 	this.game.load.image("background", "bg.png");
 	this.game.load.image("night", "shadowEarth.png")
+	this.game.load.image("basicBullet", "basicBullet.png")
 }
 
 mainGameState.create = function (){
 	
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
+	this.game.physics.p2.setImpactEvents(true);
 	
 	var width = this.game.width;
 	var height = this.game.height;
@@ -47,8 +49,9 @@ mainGameState.create = function (){
 	
 	// CollisionGroups
 	
-	otherColGroup = this.game.physics.p2.createCollisionGroup();
-	ufoColGroup = this.game.physics.p2.createCollisionGroup();
+	this.game.collisionManager = new CollisionManager(this.game.physics.p2);
+	otherColGroup = this.game.collisionManager.groups.otherColGroup;
+	ufoColGroup = this.game.collisionManager.groups.ufoColGroup;
 	
 	//NIGHT
 	night = new Phaser.Sprite(this.game, 0,0,"night");
