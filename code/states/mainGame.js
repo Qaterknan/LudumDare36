@@ -6,7 +6,8 @@ mainGameState.preload = function (){
 	this.game.load.image("earth","earth.png");
 	this.game.load.image("moon", "moon.png");
 	
-	this.game.load.image("hatak", "hatak.png");
+	this.game.load.spritesheet("hatak", "hatak.png", 16, 16);
+	this.game.load.spritesheet("tyranid", "tyranid.png", 16, 16);
 	
 	this.game.load.image("pyramida", "egypt2.png");
 	this.game.load.image("aztec", "aztec.png");
@@ -139,20 +140,9 @@ mainGameState.create = function (){
 	this.game.world.addChild(moon);
 	
 	//UFO - poté odstranit
-	ufo = new UFO(this.game, "hatak", 500,0);
+	ufo = new UFO(500,0, this.game, "tyranid",true);
 	
-	this.game.physics.p2.enable(ufo, this.game.collisionManager.debug);
-	
-	ufo.body.setRectangle(48,48);
-	
-	//ufo.body.velocity.y = 500;
-	ufo.body.mass = 1;
-	
-	this.game.physics.p2.createSpring(ufo.body, this.game.earthGroup.earth.body, this.game.earthGroup.earth.radius, 2, 0.0001);
-	
-	this.game.collisionManager.setCollisionsByClass(ufo, "ufo", false);
-	
-	ufo.body.motionState = this.game.collisionManager.motionStates.dynamic;
+	ufo.body.velocity.y = 250;
 	
 	this.game.world.addChild(ufo);
 	

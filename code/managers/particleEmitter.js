@@ -18,6 +18,10 @@ function ParticleEmitter (game, name, position, _particleOptions){
 	
 	this.options.lifespan = 5000;
 	
+	this.options.attack = 2;
+	
+	this.options.mass = 0.01;
+	
 	this.options.collisionCallbacks = {};
 	
 	this.options.motionState = "dynamic";
@@ -50,6 +54,10 @@ function ParticleEmitter (game, name, position, _particleOptions){
 				high : 0,
 			},
 		},
+		mass : {
+			low : 0,
+			high : 0,
+		},
 	};
 	
 	this.insertIntoDefault(particleOptions.randomizer, this.randomizer);
@@ -75,10 +83,10 @@ ParticleEmitter.prototype.emitParticle = function (eX,eY, rewriteOptions){
 	/// Sprite vlastnosti
 	var p = new Phaser.Particle(this.game, x, y, this.options.textureName);
 	
-	p.width = this.options.size.width + (this.randomizer.size === undefined ? 0 : this.game.rnd.between(this.randomizer.size.low, this.randomizer.size.high));
-	p.height = this.options.size.height + (this.randomizer.size === undefined ? 0 : this.game.rnd.between(this.randomizer.size.low, this.randomizer.size.high));
+	p.width = this.options.size.width + this.game.rnd.between(this.randomizer.size.low, this.randomizer.size.high);
+	p.height = this.options.size.height + this.game.rnd.between(this.randomizer.size.low, this.randomizer.size.high);
 	
-	p.lifespan = this.options.lifespan + (this.randomizer.lifespan === undefined ? 0 : this.game.rnd.between(this.randomizer.lifespan.low, this.randomizer.lifespan.high));
+	p.lifespan = this.options.lifespan + this.game.rnd.between(this.randomizer.lifespan.low, this.randomizer.lifespan.high);
 	
 	this.game.world.addChild(p);
 	// Pod gui
@@ -87,12 +95,15 @@ ParticleEmitter.prototype.emitParticle = function (eX,eY, rewriteOptions){
 	// Kolize
 	this.game.collisionManager.setCollisionsByClass(p, this.options.collisionGroup, true);
 	// Rychlost
-	p.body.velocity.x = this.options.initialVelocity.x + (this.randomizer.velocity === undefined ? 0 : this.game.rnd.between(this.randomizer.velocity.x.low, this.randomizer.velocity.x.high));
-	p.body.velocity.y = this.options.initialVelocity.y + (this.randomizer.velocity === undefined ? 0 : this.game.rnd.between(this.randomizer.velocity.y.low, this.randomizer.velocity.y.high));
+	p.body.velocity.x = this.options.initialVelocity.x + this.game.rnd.between(this.randomizer.velocity.x.low, this.randomizer.velocity.x.high);
+	p.body.velocity.y = this.options.initialVelocity.y + this.game.rnd.between(this.randomizer.velocity.y.low, this.randomizer.velocity.y.high);
+	// Hmotnost
+	p.body.mass = this.options.mass + this.game.rnd.between(this.randomizer.mass.low, this.randomizer.mass.high);
 	// Kolize
 	// Typ střely
 	p.body.motionState = this.game.collisionManager.motionStates[this.options.motionState];
-	
+	// Velikost útoku
+	p.attack = this.options.attack;
 	// Kolizní callbacky
 	this.game.collisionManager.setCollisionCallbacks(p, this.options.collisionCallbacks);
 	// Debug rámec

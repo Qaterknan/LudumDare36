@@ -10,6 +10,8 @@ function EarthGroup(game, textureNames){
 	
 	this.earth.radius = this.earth.width/2;
 	
+	this.earth.health = 100;
+	
 	/// Physics (druhý argument je debug)
 	this.game.physics.p2.enable(this.earth, true);
 	this.earth.body.angularVelocity = 1;

@@ -19,7 +19,7 @@ function EarthStructure(game, earth, plainAngle, buildingClass){
 	this.width = this.width*2/earth.scale.x;
 	this.height = this.height*2/earth.scale.y;
 	// Rotace samotné budovy
-	this.angle = angle + 90;//this.game.earthGroup.getEarthBaseAngle();
+	this.angle = angle + 90;
 	
 	this.inputEnabled = true;
 	

@@ -15,7 +15,11 @@ function StructuresManager(game, earth){
 				collisionGroup : "bullet", 
 				collisionCallbacks : {
 					"moon" : function (){},
-					"ufo" : function (){this.destroy();},
+					"ufo" : function (){},
+				},
+				size : {
+					width : 8,
+					height : 8,
 				},
 			},
 			bulletNumber : 5,
@@ -29,7 +33,7 @@ function StructuresManager(game, earth){
 				collisionGroup : "bullet", 
 				collisionCallbacks : {
 					"moon" : function (){},
-					"ufo" : function (){this.destroy();},
+					"ufo" : function (){},
 				},
 				interval : 1500,
 			},
@@ -44,7 +48,7 @@ function StructuresManager(game, earth){
 				collisionGroup : "bullet", 
 				collisionCallbacks : {
 					"moon" : function (){},
-					"ufo" : function (){this.destroy();},
+					"ufo" : function (){},
 				},
 				interval : 700,
 			},
