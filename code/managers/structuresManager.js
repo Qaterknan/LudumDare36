@@ -1,7 +1,5 @@
-function StructuresManager(game, earth){
+function StructuresManager(game){
 	this.game = game;
-	
-	this.earthGroup = earth;
 	
 	this.timer = new Phaser.Timer(this.game, false);
 	this.game.time.add(this.timer);
@@ -24,6 +22,7 @@ function StructuresManager(game, earth){
 			},
 			bulletNumber : 5,
 			price : 10,
+			available : true,
 		},
 		aztec : {
 			textureName : "aztec",
@@ -39,6 +38,7 @@ function StructuresManager(game, earth){
 			},
 			bulletNumber : 3,
 			price : 10,
+			available : true,
 		},
 		babylon : {
 			textureName : "babylon",
@@ -54,10 +54,11 @@ function StructuresManager(game, earth){
 			},
 			bulletNumber : 10,
 			price : 10,
+			available : false,
 		},
 	};
 	
-	this.activeStructure = "aztec";
+	this.activeStructure = "pyramid";
 }
 StructuresManager.prototype.build = function (structure){
 	

@@ -10,7 +10,9 @@ mainMenuState.init = function (){
 }
 
 mainMenuState.preload = function (){
-	this.game.load.script("mainGameState", "code/states/mainGame.js");
+	this.game.load.script("level_1", "code/states/level_1.js");
+	this.game.load.script("betweenLevels", "code/states/betweenLevels.js");
+	
 	this.game.load.spritesheet("button", "assets/button.png", 25, 20);
 	this.game.load.spritesheet("hatak", "assets/hatak.png", 16, 16);
 	this.game.load.spritesheet("buildButton", "assets/buildButton.png", 18, 18);
@@ -18,12 +20,31 @@ mainMenuState.preload = function (){
 
 mainMenuState.create = function (){
 	/// Zrušit value true pokud se nemá spouštět hra rovnou
-	this.game.state.add("game", mainGameState, false);
+	this.game.state.add("level_1", level_1, false);
+	this.game.state.add("betweenLevels", betweenLevels, false);
+	
+	// Init managerů
+	
+	// Resource Manager
+	this.game.resourceManager = new ResourceManager(this.game);
+	
+	// Structures Manager
+	
+	this.game.structuresManager = new StructuresManager(this.game);
+	
+	// GUI Manager
+	
+	this.game.guiManager = new GUIManager(this.game);
 	
 	this.game.world.setBounds(-this.game.width/2, -this.game.height/2, this.game.width, this.game.height);
 	
 	var startButton = this.game.add.button(0,0, "button",
-		function (){game.state.start("game");},
+		function (){game.state.start("betweenLevels", true, false, {
+			levelNumber : 0,
+			resourceManager : {
+				resourceAvailable : 0,
+			},
+		});},
 		this,
 		2,
 		0,
@@ -45,12 +66,4 @@ mainMenuState.create = function (){
 	
 	this.game.world.add(text);
 	
-	/*
-	one = this.game.input.keyboard.addKey(Phaser.Keyboard.ONE);
-	one.onDown.add(function(){square.frame = 1 - square.frame;});
-	/*
-	hatak.animations.add("fly", [0,1,2], 12, true);
-	
-	hatak.animations.play("fly");
-	*/
 }

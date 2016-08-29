@@ -1,6 +1,8 @@
 function GUIManager (game){
 	this.game = game;
 	
+	this.fontFamily = "sans-serif";
+	
 	this.keyIDs = [Phaser.Keyboard.ONE, Phaser.Keyboard.TWO, Phaser.Keyboard.THREE, Phaser.Keyboard.FOUR];
 	
 	this.keys = [];
@@ -19,9 +21,7 @@ function GUIManager (game){
 		},
 		space : 20,
 		buildings : [
-			"pyramid",
-			"aztec",
-			"babylon",
+			
 		],
 		buttonObjects : [],
 		callbacks : [
@@ -37,16 +37,35 @@ function GUIManager (game){
 		],
 	};
 	
-	this.guiGroup = new Phaser.Group(this.game);
+	this.resourcesText = {
+		position : {
+			x : 600,
+			y : 20,
+		},
+		style : {
+			font : "20px "+this.fontFamily,
+			fill : "#ffffff",
+		},
+		text : "Resources : ",
+		object : false,
+	};
+	
+	this.healthText = {
+		position : {
+			x : 20,
+			y : 20,
+		},
+		style : {
+			font : "20px "+this.fontFamily,
+			fill : "#ffffff",
+		},
+		text : "Health : ",
+		object : false,
+	};
 	
 	this.lastIndex = this.z;
 	
-	this.guiGroup.update = function (){
-		for(var i in this.children)
-			this.children[i].update();
-		if(this.lastIndex != this.z)
-			this.game.world.bringToTop(this);
-	}
+	this.guiGroup = false;
 }
 
 GUIManager.prototype.createSelectorPanel = function (){
@@ -133,7 +152,64 @@ GUIManager.prototype.setHandlers = function(){
 GUIManager.prototype.clearHandlers = function (){
 	
 	for(var i = 0; i < this.keys.length; i++){
-		this.game.input.keyboard.removeKey(this.keyIDs[i]);
+		this.keys[i].reset(true);
 		delete this.keys[i];
 	}
+}
+
+GUIManager.prototype.resetGroup = function (){
+	if(this.guiGroup)
+		this.guiGroup.destroy();
+	
+	this.guiGroup = new Phaser.Group(this.game);
+	
+	this.guiGroup.update = function (){
+		for(var i in this.children)
+			this.children[i].update();
+		if(this.lastIndex != this.z)
+			this.game.world.bringToTop(this);
+	}
+}
+
+GUIManager.prototype.createTexts = function (){
+	// Resources
+	if(this.resourcesText.object)
+		this.resourcesText.object.destroy();
+	
+	this.resourcesText.object = new Phaser.Text(
+		this.game,
+		this.resourcesText.position.x,
+		this.resourcesText.position.y,
+		this.resourcesText.text+this.game.resourceManager.resourceAvailable,
+		this.resourcesText.style
+	);
+	
+	this.guiGroup.addChild(this.resourcesText.object);
+	
+	// Health
+	if(this.healthText.object){
+		this.healthText.object.destroy();
+	}
+	
+	this.healthText.object = new Phaser.Text(
+		this.game,
+		this.healthText.position.x,
+		this.healthText.position.y,
+		this.healthText.text+this.game.earthGroup.earth.health,
+		this.healthText.style
+	);
+	
+	this.guiGroup.addChild(this.healthText.object);
+}
+
+GUIManager.prototype.updateText = function (name, value){
+	
+	if(name == "resourcesText"){
+		this.resourcesText.object.text = this.resourcesText.text+value;
+	}
+	
+	if(name == "healthText"){
+		this.healthText.object.text = this.healthText.text + value;
+	}
+	
 }

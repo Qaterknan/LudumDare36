@@ -22,6 +22,8 @@ function UFO (x,y,game, classID, animation, textureName){
 		this.animations.play("fly");
 	}
 	
+	this.smoothed = false;
+	
 	this.health = 10;
 	this.attack = 5;
 	
@@ -38,9 +40,10 @@ function UFO (x,y,game, classID, animation, textureName){
 	this.game.collisionManager.setCollisionsByClass(this, "ufo", false);
 	
 	this.game.collisionManager.setCollisionCallbacks(this, {"bullet" : function(ufoBody, bulletBody){
-		this.damage(bulletBody.sprite.attack);console.log(bulletBody.sprite.attack);
-		
-		bulletBody.sprite.destroy();
+		if(bulletBody.sprite){ // Pokud už nezačal ničící proces
+			this.damage(bulletBody.sprite.attack);
+			bulletBody.sprite.destroy();
+		}
 	}});
 	
 	this.body.motionState = this.game.collisionManager.motionStates.dynamic;

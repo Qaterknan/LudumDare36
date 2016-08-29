@@ -1,6 +1,6 @@
-var mainGameState = new Phaser.State();
+var level_1 = new Phaser.State();
 
-mainGameState.preload = function (){
+level_1.preload = function (){
 	this.game.load.path = "assets/";
 	
 	this.game.load.image("earth","earth.png");
@@ -20,7 +20,7 @@ mainGameState.preload = function (){
 	this.game.load.spritesheet("selectorButton", "buildButton.png", 18, 18);
 }
 
-mainGameState.create = function (){
+level_1.create = function (){
 	// Fyzika
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
 	this.game.physics.p2.setImpactEvents(true);
@@ -28,6 +28,11 @@ mainGameState.create = function (){
 	var width = this.game.width;
 	var height = this.game.height;
 	this.game.world.setBounds(-width/2,-height/2,width,height);
+	
+	// Reset timerů
+	this.game.time.reset();
+	this.game.time.add(this.game.structuresManager.timer);
+	
 
 	//STAR GROUP - pomalu rotující pozadí
 	var starGroup
@@ -64,19 +69,26 @@ mainGameState.create = function (){
 	
 	this.game.world.addChild(this.game.earthGroup);
 	
-	// Resource Manager
-	
-	this.game.resourceManager = new ResourceManager(this.game);
-	
-	// Structures Manager
-	
-	this.game.structuresManager = new StructuresManager(this.game, this.game.earthGroup);
-	
 	// GUI Manager
 	
-	this.game.guiManager = new GUIManager(this.game);
+	this.game.guiManager.resetGroup();
+	
+	// Nastavení dovolených budov
+	this.game.guiManager.buildings = [];
+	this.game.guiManager.buttonObjects = [];
+	
+	for(var i in this.game.structuresManager.structures){
+		if(this.game.structuresManager.structures[i].available){
+			this.game.guiManager.selectorPanel.buildings.push(i);
+		}
+	}
+	
 	this.game.guiManager.createSelectorPanel();
 	this.game.guiManager.setHandlers();
+	
+	// Nastavení textů
+	
+	this.game.guiManager.createTexts();
 	
 	// Handler pro přidávání struktur
 	this.game.input.onTap.add(function(){
