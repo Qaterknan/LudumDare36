@@ -3,7 +3,7 @@ function ResourceManager(game){
 	
 	this.game = game;
 }
-ResourceManager.prototype.buildStructure = function (name){
+ResourceManager.prototype.payStructure = function (name){
 	if(this.game.structuresManager.structures[name].price <= this.resourceAvailable){
 		this.resourceAvailable -= this.game.structuresManager.structures[name].price;
 		return true;

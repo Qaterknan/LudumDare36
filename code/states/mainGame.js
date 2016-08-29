@@ -75,6 +75,7 @@ mainGameState.create = function (){
 	
 	this.game.guiManager = new GUIManager(this.game);
 	this.game.guiManager.createSelectorPanel();
+	this.game.guiManager.setHandlers();
 	
 	// Handler pro přidávání struktur
 	this.game.input.onTap.add(function(){
@@ -82,13 +83,17 @@ mainGameState.create = function (){
 		var y = this.game.input.activePointer.worldY;
 		var clickAngle = this.getSimpleAngle(x,y);
 		
-		var canBuild = this.game.resourceManager.buildStructure(this.game.structuresManager.activeStructure);
+		var active = this.game.structuresManager.activeStructure;
+		
+		if(!active)
+			return;
+		var canBuild = this.game.resourceManager.payStructure(active);
 		if(canBuild){
 			var newStructure = new EarthStructure(
 				this.game,
 				this.game.earthGroup.earth,
 				clickAngle,
-				this.game.structuresManager.activeStructure
+				active
 			);
 			this.game.earthGroup.earth.addChild(newStructure);
 			

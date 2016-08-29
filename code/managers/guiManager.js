@@ -1,7 +1,9 @@
 function GUIManager (game){
 	this.game = game;
 	
-	this.keys = [Phaser.Keyboard.ONE, Phaser.Keyboard.TWO, Phaser.Keyboard.THREE, Phaser.Keyboard.FOUR];
+	this.keyIDs = [Phaser.Keyboard.ONE, Phaser.Keyboard.TWO, Phaser.Keyboard.THREE, Phaser.Keyboard.FOUR];
+	
+	this.keys = [];
 	
 	this.selectorButton = {
 		textureName : "selectorButton",
@@ -21,15 +23,16 @@ function GUIManager (game){
 			"aztec",
 			"babylon",
 		],
-		callBacks : [
+		buttonObjects : [],
+		callbacks : [
 			function (){
-				
+				this.handleKey(0);
 			},
 			function (){
-				
+				this.handleKey(1);
 			},
 			function (){
-				
+				this.handleKey(2);
 			},
 		],
 	};
@@ -59,9 +62,78 @@ GUIManager.prototype.createSelectorPanel = function (){
 		
 		this.guiGroup.add(sB);
 		
-		if(this.selectorPanel.buildings[i] == this.activeStructure){
+		if(this.selectorPanel.buildings[i] == this.game.structuresManager.activeStructure){
 			sB.switchFrames();
 		}
+		
+		this.selectorPanel.buttonObjects.push(sB);
 	};
 	this.guiGroup.fixedToCamera = true;
+}
+
+GUIManager.prototype.switchSelectorOff = function (num){
+	
+	var active = this.game.structuresManager.activeStructure;
+	
+	if(!active){
+		return -1;
+	}
+	
+	if((num === undefined || num >= this.selectorPanel.buildings.length)){
+		// Vypnout právě aktivní
+		var index = this.selectorPanel.buildings.indexOf(active);
+		
+		this.selectorPanel.buttonObjects[index].switchFrames();
+		
+		return index;
+	}
+	else {
+		if(this.selectorPanel.buttonObjects[num].currentFrame){ // Current frame je 1 pokud aktivní
+			this.selectorPanel.buttonObjects[num].switchFrames();
+			
+			return num;
+		}
+		
+		return -1;
+	}
+}
+
+GUIManager.prototype.switchSelectorOn = function (num){
+	if(num === undefined || num > this.selectorPanel.buildings.length)
+		return false
+	else{
+		if(this.selectorPanel.buttonObjects[num].currentFrame == 0)
+			this.selectorPanel.buttonObjects[num].switchFrames();
+	}
+}
+
+GUIManager.prototype.handleKey = function(num){
+	var switchedOff = this.switchSelectorOff();
+	if(switchedOff == num){
+		this.game.structuresManager.activeStructure = false;
+		return;
+	}
+	else {
+		this.game.structuresManager.activeStructure = this.selectorPanel.buildings[num];
+		this.switchSelectorOn(num);
+	}
+}
+
+GUIManager.prototype.setHandlers = function(){
+	
+	this.clearHandlers();
+	
+	for(var i = 0; i < this.selectorPanel.buildings.length; i++){
+		this.keys.push(this.game.input.keyboard.addKey(this.keyIDs[i]));
+		
+		this.keys[i].onDown.add(this.selectorPanel.callbacks[i], this);
+	}
+}
+
+GUIManager.prototype.clearHandlers = function (){
+	
+	for(var i = 0; i < this.keys.length; i++){
+		this.game.input.keyboard.removeKey(this.keyIDs[i]);
+		delete this.keys[i];
+	}
 }
