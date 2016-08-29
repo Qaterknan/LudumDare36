@@ -34,7 +34,7 @@ function SelectorButton(game, x,y, buildingClass){
 	
 	this.picture.anchor.x = this.picture.anchor.y = 0.5;
 	
-	this.addChild(this.picture);console.log(this);
+	this.addChild(this.picture);
 }
 
 SelectorButton.prototype = Object.create( Phaser.Image.prototype );

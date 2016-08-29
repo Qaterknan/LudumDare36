@@ -5,9 +5,13 @@ mainGameState.preload = function (){
 	
 	this.game.load.image("earth","earth.png");
 	this.game.load.image("moon", "moon.png");
+	
 	this.game.load.image("hatak", "hatak.png");
+	
 	this.game.load.image("pyramida", "egypt2.png");
 	this.game.load.image("aztec", "aztec.png");
+	this.game.load.image("babylon", "babylon.png");
+	
 	this.game.load.image("background", "bg.png");
 	this.game.load.image("night", "shadowEarth.png");
 	this.game.load.image("basicBullet", "basicBullet.png");
@@ -77,16 +81,14 @@ mainGameState.create = function (){
 		var x = this.game.input.activePointer.worldX;
 		var y = this.game.input.activePointer.worldY;
 		var clickAngle = this.getSimpleAngle(x,y);
-		// Nahradí se ID z nějakého GUI
-		var structureID = "pyramid"
 		
-		var canBuild = this.game.resourceManager.buildStructure(structureID);
+		var canBuild = this.game.resourceManager.buildStructure(this.game.structuresManager.activeStructure);
 		if(canBuild){
 			var newStructure = new EarthStructure(
 				this.game,
 				this.game.earthGroup.earth,
 				clickAngle,
-				structureID
+				this.game.structuresManager.activeStructure
 			);
 			this.game.earthGroup.earth.addChild(newStructure);
 			
@@ -148,4 +150,5 @@ mainGameState.create = function (){
 	ufo.body.motionState = this.game.collisionManager.motionStates.dynamic;
 	
 	this.game.world.addChild(ufo);
+	
 };

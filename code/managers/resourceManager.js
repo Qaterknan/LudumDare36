@@ -1,15 +1,11 @@
 function ResourceManager(game){
-	this.resourceAvailable = 10;
+	this.resourceAvailable = 30;
 	
 	this.game = game;
-	
-	this.structureRequirements = {
-		"pyramid" : 10,
-	};
 }
 ResourceManager.prototype.buildStructure = function (name){
-	if(this.structureRequirements[name] <= this.resourceAvailable){
-		this.resourceAvailable -= this.structureRequirements[name];
+	if(this.game.structuresManager.structures[name].price <= this.resourceAvailable){
+		this.resourceAvailable -= this.game.structuresManager.structures[name].price;
 		return true;
 	}
 	else{

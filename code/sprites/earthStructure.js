@@ -29,8 +29,10 @@ function EarthStructure(game, earth, plainAngle, buildingClass){
 	this.addChild(this.weapon);
 	
 	this.events.onInputDown.add(function(){
-		if(this.buildingDone)
-			this.weapon.startStream(this.bulletNumber);
+		if(this.buildingDone && !this.firing){
+			this.firing = true;
+			this.weapon.startStream(this.bulletNumber, function(){this.firing = false;}, this);
+		}
 	}, this);
 	
 }

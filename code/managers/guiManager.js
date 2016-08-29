@@ -1,11 +1,7 @@
 function GUIManager (game){
 	this.game = game;
 	
-	this.contents = [];
-	
 	this.keys = [Phaser.Keyboard.ONE, Phaser.Keyboard.TWO, Phaser.Keyboard.THREE, Phaser.Keyboard.FOUR];
-	
-	this.activeStructure = "pyramid";
 	
 	this.selectorButton = {
 		textureName : "selectorButton",
@@ -16,15 +12,38 @@ function GUIManager (game){
 	
 	this.selectorPanel = {
 		begin : {
-			x : -300,
-			y : 250,
+			x : 50,
+			y : 550,
 		},
 		space : 20,
 		buildings : [
 			"pyramid",
 			"aztec",
+			"babylon",
+		],
+		callBacks : [
+			function (){
+				
+			},
+			function (){
+				
+			},
+			function (){
+				
+			},
 		],
 	};
+	
+	this.guiGroup = new Phaser.Group(this.game);
+	
+	this.lastIndex = this.z;
+	
+	this.guiGroup.update = function (){
+		for(var i in this.children)
+			this.children[i].update();
+		if(this.lastIndex != this.z)
+			this.game.world.bringToTop(this);
+	}
 }
 
 GUIManager.prototype.createSelectorPanel = function (){
@@ -37,12 +56,12 @@ GUIManager.prototype.createSelectorPanel = function (){
 			this.selectorPanel.begin.y,
 			this.selectorPanel.buildings[i]
 		);
-		this.contents.push(sB);
 		
-		this.game.world.add(sB);
+		this.guiGroup.add(sB);
 		
 		if(this.selectorPanel.buildings[i] == this.activeStructure){
 			sB.switchFrames();
 		}
 	};
+	this.guiGroup.fixedToCamera = true;
 }

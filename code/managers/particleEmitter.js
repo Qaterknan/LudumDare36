@@ -1,14 +1,16 @@
-function ParticleEmitter (game, name, position, particleOptions){
+function ParticleEmitter (game, name, position, _particleOptions){
 	Phaser.Group.call(this, game, null, name, false, true, Phaser.Physics.P2JS);
 	
 	this.x = position.x === undefined ? 0 : position.x;
 	this.y = position.y === undefined ? 0 : position.y;
 	
+	var particleOptions = _particleOptions === undefined ? {} : _particleOptions;
+	
 	this.options = {};
 	
 	this.options.collisionGroup = "bullet";
 	
-	this.options.textureName =  "";
+	this.options.textureName =  "basicBullet";
 	
 	this.options.size = {width : 32, height : 32};
 	
@@ -23,6 +25,8 @@ function ParticleEmitter (game, name, position, particleOptions){
 	this.insertIntoDefault(particleOptions, this.options);
 	
 	this.emitInterval = particleOptions.interval === undefined ? 100 : particleOptions.interval;
+		
+	this.emitsRemaining = 0;
 	
 	this.emittingTimer = new Phaser.Timer(this.game, false);
 	this.game.time.add(this.emittingTimer);
@@ -77,6 +81,8 @@ ParticleEmitter.prototype.emitParticle = function (eX,eY, rewriteOptions){
 	p.lifespan = this.options.lifespan + (this.randomizer.lifespan === undefined ? 0 : this.game.rnd.between(this.randomizer.lifespan.low, this.randomizer.lifespan.high));
 	
 	this.game.world.addChild(p);
+	// Pod gui
+	this.game.world.moveDown(p);
 	// Physics vlastnosti
 	// Kolize
 	this.game.collisionManager.setCollisionsByClass(p, this.options.collisionGroup, true);
@@ -116,7 +122,7 @@ ParticleEmitter.prototype.explode = function (n){
 	}
 }
 
-ParticleEmitter.prototype.startStream = function(n){
+ParticleEmitter.prototype.startStream = function(n, callback, callbackContext){
 	if(n === undefined){
 		this.emitParticle();
 		this.emittingTimer.loop(this.emitInterval, function(){this.emitParticle();}, this);
@@ -124,7 +130,18 @@ ParticleEmitter.prototype.startStream = function(n){
 	else{
 		this.emitParticle();
 		if(n > 1){
-			this.emittingTimer.repeat(this.emitInterval, n-1, function(){this.emitParticle();}, this);
+			this.emitsRemaining = n-1;
+			this.emittingTimer.repeat(this.emitInterval, n-1, function(){
+				this.emitParticle();
+				this.emitsRemaining--;
+				if(this.emitsRemaining <= 0 && callback){
+					this.emitsRemaining = 0;
+					if(callbackContext)
+						callback.call(callbackContext);
+					else
+						callback();
+				}
+			}, this);
 		}
 	}
 	this.emittingTimer.start();
