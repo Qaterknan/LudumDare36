@@ -1,10 +1,14 @@
-var level_1 = new Phaser.State();
+var level_2 = new Phaser.State();
 
-level_1.preload = function (){
+level_2.init = function (levelParser){
 	
 }
 
-level_1.create = function (){
+level_2.preload = function (){
+	
+}
+
+level_2.create = function (){
 	// Fyzika
 	this.game.physics.startSystem(Phaser.Physics.P2JS);
 	this.game.physics.p2.setImpactEvents(true);
@@ -50,7 +54,7 @@ level_1.create = function (){
 	
 	// EARTH GROUP
 	
-	this.game.earthGroup = new EarthGroup(this.game,"earth");
+	this.game.earthGroup = new EarthGroup(this.game, "earth");
 	
 	this.game.world.addChild(this.game.earthGroup);
 	

@@ -26,8 +26,16 @@ function UFO (game,x,y, classID, animation, textureName){
 	
 	this.health = 10;
 	this.attack = 5;
+	this.resourceValue = 2;
 	
-	this.events.onKilled.add(function(){this.destroy();}, this);
+	this.events.onKilled.add(function(){
+		this.game.resourceManager.availableResource += this.resourceValue;
+		this.game.ufoSpawner.remainingTotal--;
+		if(this.game.ufoSpawner.remainingTotal <= 0){
+			this.game.guiManager.displayVictoryMessage(this.game.level);
+		}
+		this.destroy();
+	}, this);
 	
 	this.game.physics.p2.enable(this, this.game.collisionManager.debug);
 	
@@ -46,7 +54,7 @@ function UFO (game,x,y, classID, animation, textureName){
 			if(ufoBody.sprite){
 				earthBody.sprite.damage(this.attack);
 				this.game.guiManager.updateText("healthText", earthBody.sprite.health);
-				ufoBody.sprite.destroy();
+				ufoBody.sprite.kill();
 			}
 		}
 	});

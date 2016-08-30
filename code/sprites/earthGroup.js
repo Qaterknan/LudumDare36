@@ -1,7 +1,7 @@
-function EarthGroup(game, textureNames){
+function EarthGroup(game, textureName){
 	Phaser.Group.call(this, game, null, "earthGroup");
 	/// Země
-	this.earth = new Phaser.Sprite(this.game, 0,0,textureNames.earth);
+	this.earth = new Phaser.Sprite(this.game, 0,0,textureName);
 	this.earth.anchor.x = 0.5;
 	this.earth.anchor.y = 0.5;
 	
@@ -21,8 +21,6 @@ function EarthGroup(game, textureNames){
 	this.game.collisionManager.setCollisionsByClass(this.earth, "earth", false);
 	
 	this.addChild(this.earth);
-	
-	this.textureNames = textureNames;
 }
 EarthGroup.prototype = Object.create( Phaser.Group.prototype );
 

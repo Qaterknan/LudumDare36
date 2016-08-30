@@ -213,3 +213,18 @@ GUIManager.prototype.updateText = function (name, value){
 	}
 	
 }
+
+GUIManager.prototype.displayVictoryMessage = function (LN){
+	var text = this.game.add.text(0,0, "VICTORY !", {font: "40px "+this.fontFamily, fill: "#ffffff"});
+	
+	text.anchor.x = text.anchor.y = 0.5;
+	
+	this.game.ufoSpawner.timer.add(3000, function (){
+		this.game.state.start("betweenLevels",true, false, {
+			levelNumber : LN,
+			resourceManager : {
+				resourceAvailable : this.game.resourceManager.resourcesAvailable,
+			}
+		});
+	}, this);
+}

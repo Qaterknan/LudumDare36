@@ -15,5 +15,5 @@ ResourceManager.prototype.payStructure = function (name){
 };
 
 ResourceManager.prototype.levelParse = function (options){
-	this.resourceAvailable = options.resourceAvailable + 100;
+	this.resourceAvailable = options.resourceAvailable;
 }

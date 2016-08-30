@@ -11,15 +11,14 @@ function UFOSpawner(game){
 			waves : {
 				5000 : [
 					"tyranid:X:10",
-					"hatak:X:2"
 				],
-				15000 : [
-					"tyranid:X:5",
+				10000 : [
+					"tyranid:X:10",
 				],
 			},
-			total : 17,
+			total : 20,
 			spawnAreas : {
-				5000 : {
+				1000 : {
 					x : [
 						{
 							min : 350,
@@ -37,7 +36,7 @@ function UFOSpawner(game){
 						}
 					],
 				},
-				15000 : {
+				2000 : {
 					x : [
 						{
 							min : 350,
@@ -93,6 +92,10 @@ UFOSpawner.prototype.spawn = function (type, x,y){
 	if(type == "tyranid"){
 		this.game.world.addChild(new Tyranid(this.game, x,y,true));
 	}
+	
+	if(type == "hatak"){console.log("hatak");
+		this.game.world.addChild(new Hatak(this.game, x,y,true));
+	}
 }
 
 UFOSpawner.prototype.startLevel = function(name){
@@ -100,7 +103,8 @@ UFOSpawner.prototype.startLevel = function(name){
 		this.remainingTotal = this.levels[name].total;
 		
 		for(var i in this.levels[name].waves){
-			this.timer.add(parseInt(i), function (){this.spawnWave(i+"");}, this);
+			
+			this.timer.add(parseInt(i+""), function (){this.spawnWave(i+"");}, this);
 		}
 		
 		this.timer.start();

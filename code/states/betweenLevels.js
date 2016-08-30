@@ -1,6 +1,6 @@
 betweenLevels = new Phaser.State();
 
-betweenLevels.init = function (levelParser){
+betweenLevels.init = function (levelParser){console.log(levelParser.levelNumber);
 	this.game.level = levelParser.levelNumber+1;
 	
 	this.game.ufoSpawner.currentLevel = "level_"+(levelParser.levelNumber+1);
@@ -9,10 +9,7 @@ betweenLevels.init = function (levelParser){
 }
 
 betweenLevels.preload = function (){
-	this.game.load.spritesheet("button", "assets/button.png", 25, 20);
-	this.game.load.spritesheet("buildButton", "assets/buildButton.png", 18, 18);
 	
-	this.game.load.image("pyramid", "assets/egypt2.png", 16, 16);
 }
 
 betweenLevels.create = function (){

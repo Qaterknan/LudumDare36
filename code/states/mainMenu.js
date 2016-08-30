@@ -11,16 +11,35 @@ mainMenuState.init = function (){
 
 mainMenuState.preload = function (){
 	this.game.load.script("level_1", "code/states/level_1.js");
+	this.game.load.script("level_2", "code/states/level_2.js");
 	this.game.load.script("betweenLevels", "code/states/betweenLevels.js");
 	
 	this.game.load.spritesheet("button", "assets/button.png", 25, 20);
-	this.game.load.spritesheet("hatak", "assets/hatak.png", 16, 16);
 	this.game.load.spritesheet("buildButton", "assets/buildButton.png", 18, 18);
+	
+	this.game.load.path = "assets/";
+	
+	this.game.load.image("earth","earth.png");
+	this.game.load.image("moon", "moon.png");
+	
+	this.game.load.spritesheet("hatak", "hatak.png", 16, 16);
+	this.game.load.spritesheet("tyranid", "tyranid.png", 16, 16);
+	
+	this.game.load.image("pyramida", "egypt2.png");
+	this.game.load.image("aztec", "aztec.png");
+	this.game.load.image("babylon", "babylon.png");
+	
+	this.game.load.image("background", "bg.png");
+	this.game.load.image("night", "shadowEarth.png");
+	this.game.load.image("basicBullet", "basicBullet.png");
+	
+	this.game.load.spritesheet("selectorButton", "buildButton.png", 18, 18);
 }
 
 mainMenuState.create = function (){
 	/// Zrušit value true pokud se nemá spouštět hra rovnou
 	this.game.state.add("level_1", level_1, false);
+	this.game.state.add("level_2", level_1, false);
 	this.game.state.add("betweenLevels", betweenLevels, false);
 	
 	// Init managerů
@@ -46,7 +65,7 @@ mainMenuState.create = function (){
 		function (){game.state.start("betweenLevels", true, false, {
 			levelNumber : 0,
 			resourceManager : {
-				resourceAvailable : 0,
+				resourceAvailable : 50,
 			},
 		});},
 		this,
