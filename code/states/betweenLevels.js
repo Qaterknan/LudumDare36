@@ -1,7 +1,9 @@
 betweenLevels = new Phaser.State();
 
 betweenLevels.init = function (levelParser){
-	this.game.level = levelParser.levelNumber;
+	this.game.level = levelParser.levelNumber+1;
+	
+	this.game.ufoSpawner.currentLevel = "level_"+(levelParser.levelNumber+1);
 	
 	this.game.resourceManager.levelParse(levelParser.resourceManager);
 }
@@ -17,8 +19,7 @@ betweenLevels.create = function (){
 	
 	var startButton = this.game.add.button(320,250, "button",
 		function (){
-			this.game.state.start("level_"+(this.game.level+1));
-			this.game.level++;
+			this.game.state.start("level_"+(this.game.level));
 		},
 		this,
 		2,

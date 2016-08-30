@@ -36,6 +36,10 @@ mainMenuState.create = function (){
 	
 	this.game.guiManager = new GUIManager(this.game);
 	
+	// UFO Spawner
+	
+	this.game.ufoSpawner = new UFOSpawner(this.game);
+	
 	this.game.world.setBounds(-this.game.width/2, -this.game.height/2, this.game.width, this.game.height);
 	
 	var startButton = this.game.add.button(0,0, "button",

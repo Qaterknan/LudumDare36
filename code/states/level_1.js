@@ -32,6 +32,7 @@ level_1.create = function (){
 	// Reset timerů
 	this.game.time.reset();
 	this.game.time.add(this.game.structuresManager.timer);
+	this.game.time.add(this.game.ufoSpawner.timer);
 	
 
 	//STAR GROUP - pomalu rotující pozadí
@@ -151,11 +152,6 @@ level_1.create = function (){
 	
 	this.game.world.addChild(moon);
 	
-	//UFO - poté odstranit
-	ufo = new UFO(500,0, this.game, "tyranid",true);
-	
-	ufo.body.velocity.y = 250;
-	
-	this.game.world.addChild(ufo);
+	this.game.ufoSpawner.startLevel("level_"+this.game.level);
 	
 };

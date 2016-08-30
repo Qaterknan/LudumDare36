@@ -1,4 +1,4 @@
-function UFO (x,y,game, classID, animation, textureName){
+function UFO (game,x,y, classID, animation, textureName){
 	
 	this.game = game;
 	
@@ -33,18 +33,23 @@ function UFO (x,y,game, classID, animation, textureName){
 	
 	this.body.setRectangle(48,48);
 	
-	this.body.mass = 3;
-	
-	this.game.physics.p2.createSpring(this.body, this.game.earthGroup.earth.body, this.game.earthGroup.earth.radius, 3, 1);
-	
 	this.game.collisionManager.setCollisionsByClass(this, "ufo", false);
 	
-	this.game.collisionManager.setCollisionCallbacks(this, {"bullet" : function(ufoBody, bulletBody){
-		if(bulletBody.sprite){ // Pokud už nezačal ničící proces
-			this.damage(bulletBody.sprite.attack);
-			bulletBody.sprite.destroy();
+	this.game.collisionManager.setCollisionCallbacks(this, {
+		"bullet" : function(ufoBody, bulletBody){
+			if(bulletBody.sprite){ // Pokud už nezačal ničící proces
+				this.damage(bulletBody.sprite.attack);
+				bulletBody.sprite.destroy();
+			}
+		},
+		"earth" : function (ufoBody, earthBody){
+			if(ufoBody.sprite){
+				earthBody.sprite.damage(this.attack);
+				this.game.guiManager.updateText("healthText", earthBody.sprite.health);
+				ufoBody.sprite.destroy();
+			}
 		}
-	}});
+	});
 	
 	this.body.motionState = this.game.collisionManager.motionStates.dynamic;
 	
